@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <!-- 引入 ECharts 文件 -->
+    <script src="./echarts.min.js"></script>
+    <style type="text/css">
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+            }
+
+            * {
+                margin: 0;
+            }
+
+            #chart {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-size: .24rem;
+                color: #999;
+            }
+
+
+    </style>
+</head>
+<body>
+<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+<div id="chart" style="height:100%;"></div>
+<script type="text/javascript">
+    function setData(option,data,data1) {
+        console.log("设置option：\n" + option);
+<!--        console.log("设置图表：\n" + JSON.stringify(option));-->
+<!--      let data = [["21:10", 1], ["22:15", 1], ["23:10", 1], ["1:10", 1], ["3:10", 1]]-->
+<!--      let data =   datainfo-->
+<!--      let data = JSON.stringify(data);-->
+<!--      let data1 = [["21:10", 2], ["22:15", 2], ["23:10", 2], ["1:10", 2], ["3:10", 2]]-->
+      let time = data.map(item => {
+        return item[0]
+      })
+      time.push(...["4:10", "5:10", "6:10", "7:10"])
+
+       option = {
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          left: 40,
+          top: 20,
+          data: ['宫颈扩张(cm)', '胎先露下降程度(cm)',],
+        },
+        grid: {
+          left: '60',
+          right: '40',
+          bottom: '10',
+          containLabel: true
+        },
+        xAxis: [
+          {
+            data: time,
+            position: 'bottom',// 很重要，如果没有这个设置，默认第二个x轴就会在图表的顶部
+            offset: 0,// X 轴相对于默认位置的偏移，在相同的 position 上有多个 X 轴的时候有用
+            type: "category",// 坐标轴类型
+            boundaryGap: false,
+            axisTick: { show: false },// 是否显示坐标轴刻度
+            axisLine: { show: false },// 是否显示坐标轴轴线
+          },
+        ],
+        yAxis: [{
+          offset: 0,
+          name: '宫\n颈\n扩\n张\ncm',
+          nameLocation: 'left',
+          nameTextStyle: {
+            lineHeight: 20,
+            color: "#087cff",
+            fontSize: 14,
+            padding: [0, 90, -50, 0]
+          },
+          nameGap: 20,
+          type: 'value',
+          alignTicks: true,
+          interval: 1,
+          min: 0,
+          max: 10,
+          splitLine: {
+            lineStyle: {
+              // 设置背景横线
+              color: 'red'
+            }
+          },
+        },
+        {
+          name: '胎\n先\n露\n下\n降\n程\n度\ncm',
+          // nameLocation: 'end',
+          nameLocation: 'right',
+          nameTextStyle: {
+            lineHeight: 20,
+            color: "#087cff",
+            fontSize: 14,
+            padding: [0, 0, -80, 90]
+          },
+          alignTicks: true,
+          type: 'value',
+          interval: 1,
+          min: -5,
+          max: 5,
+          z: 2,
+          splitLine: {
+            z: 2,
+            lineStyle: {
+              // 设置背景横线
+              width: 1,
+              color: '#ffffff',
+            }
+          },
+        }
+        ],
+        series: [
+          {
+            name: "宫颈扩张(cm)",
+            type: 'line',
+            data: data,
+            z: 3,
+            markLine: {
+              z: 1,
+              symbol: ['none', 'none'],
+              data: [
+                { xAxis: "23:10", lineStyle: { color: "rgba(0,0,0,0)" }, label: { formatter: "3M", show: true, position: "end" } },
+                { yAxis: 5, lineStyle: { color: '#ce0900', width: 1, type: 'solid' }, label: { formatter: "", show: true, position: "end" } },
+                { xAxis: "1:10", lineStyle: { color: "rgba(0,0,0,0)", width: 1, type: 'solid' }, label: { formatter: "5M", show: true, position: "end" } },
+                [
+                  {
+                    xAxis: "1:10",
+                    yAxis: 3,
+                    lineStyle: { color: "rgba(0,0,0,1)", width: 1, type: 'dashed' },
+                    label: { formatter: "警戒线", show: true, position: "end" }
+                  },
+                  {
+                    xAxis: "4:10",
+                    yAxis: 10,
+                  }
+                ],
+                [
+                  {
+                    xAxis: "4:10",
+                    yAxis: 3,
+                    lineStyle: { color: "rgba(0,0,0,1)", width: 1, type: 'dashed' },
+                    label: { formatter: "异常线", show: true, position: "end" }
+                  },
+                  {
+                    xAxis: "6:10",
+                    yAxis: 10,
+                  }
+                ]
+              ],
+              lineStyle: {
+                z: 10,
+                width: 2
+              }
+            },
+            markArea: {
+              z: 100,
+              silent: true,
+              data: [
+                [
+                  {
+                    name: '潜伏期',
+                    label: {
+                      offset: [0, -10],
+                      z: 100,
+                      position: 'inside',
+                      color: '#7db3fd'
+                    },
+                    z: 100,
+                    itemStyle: {
+                      z: 100,
+                      opacity: 1,
+                      color: '#d0e4ff'
+                    },
+                    xAxis: "21:10"
+                  },
+                  {
+                    xAxis: "23:10"
+                  }
+                ],
+                [
+                  {
+
+                    label: {
+                      offset: [0, -10],
+                      position: 'inside',
+                      color: '#1d84fe',
+                      z: 100,
+                    },
+                    name: '活跃期',
+                    xAxis: '23:10',
+                    z: 100,
+                    itemStyle: {
+                      z: 100,
+                      opacity: 1,
+                      color: '#99c2fd'
+                    },
+                  },
+                  {
+                    xAxis: '1:10'
+                  }
+                ],
+                [
+                  {
+                    label: {
+                      offset: [0, -10],
+                      position: 'inside',
+                      color: '#c07e12',
+                      lineHeight: 20,
+                      z: 100,
+                    },
+                    name: '第\n二\n产\n程',
+                    xAxis: '1:10',
+                    z: 100,
+                    itemStyle: {
+                      z: 100,
+                      opacity: 1,
+                      color: '#ffd499'
+                    },
+                  },
+                  {
+                    xAxis: '3:10'
+                  }
+                ]
+              ]
+            },
+            lineStyle: {
+              width: 2,
+              color: "#2ad444"
+            },
+            itemStyle: {
+              normal: {
+                color: '#2ad444'
+              }
+            }
+          },
+          {
+            yAxisIndex: 1,
+            name: '胎先露下降程度(cm)',
+            type: 'line',
+            // stack: 'Total',
+            data: data1,
+            lineStyle: {
+              width: 2,
+              color: "#166ce2"
+            },
+            itemStyle: {
+              normal: {
+                color: '#166ce2'
+              }
+            }
+          },
+        ]
+      }
+
+        // 基于准备好的dom，初始化echarts实例
+        try {
+            var myChart = echarts.init(document.getElementById('chart'));
+            myChart.setOption(option);
+        } catch (e) {
+            console.log("设置图表error：\n" + JSON.stringify(e));
+        }
+    }
+
+    function setEmpty(msg, fontSize = 12) {
+        console.log("设置图表空数据", msg, fontSize);
+        document.getElementById('chart').innerHTML = "<span style='font-size:" + 0.01 * (fontSize * 2) + "rem;'>" + (!msg ? '暂无数据~' : msg) + "</span>";
+    }
+
+</script>
+<script type="text/javascript">
+    (function(doc, win) {
+        var docEl = doc.documentElement,
+            resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+            recalc = function() {
+                var clientWidth = docEl.clientWidth;
+                if (!clientWidth) return;
+                window.mtSizeBase = 100 * (clientWidth / 750);
+                window.mtSizeBase = window.mtSizeBase > 100 ? 100 : window.mtSizeBase;
+                window.mtSizeBase = window.mtSizeBase < 45 ? 45 : window.mtSizeBase;
+                docEl.style.fontSize = window.mtSizeBase + 'px';
+            };
+        if (!doc.addEventListener) return;
+        win.addEventListener(resizeEvt, recalc, false);
+        doc.addEventListener('DOMContentLoaded', recalc, false);
+    })(document, window);
+
+</script>
+</body>
+</html>
